@@ -3,7 +3,7 @@
 2 Bernaola Gayoso César Raúl
 3 Castro Chaupis, Armando Cristhian
 4 Castro Galindo Carlo André
-5 Diaz Tapia Adderly Orlando
+5 Diaz Tapia Adderly Orlando <adderly.diaz.tapia@gmail.com>
 6 DÍAZ VEGA OLENKA HELENE
 7 Lopez Flores Royer Amed
 8 Miranda Zarate Jorge Luis
