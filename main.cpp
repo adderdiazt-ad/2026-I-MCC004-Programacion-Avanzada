@@ -33,6 +33,9 @@ int main() {
     // 11 Oscar Toledo Guerrero <tgoscar@gmail.com>
 
     // 12 Quispe Calloapaza, David Saul <quispedavid987@gmail.com>
+    double a1 = 5., b1 = 6.;
+    double p0 = Promedio(a1, b1);
+    cout << "David Quispe: " << p0 << endl;
 
     // 13 Suarez Maciel Susana Isabel <susana.suarez.maciel@gmail.com>
 
