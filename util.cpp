@@ -27,6 +27,15 @@ float dividir(int x,int y)
 // 6 Díaz Vega Greta Solange <gretadiaz01@gmail.com>
 
 // 7 DÍAZ VEGA OLENKA HELENE <olenka.diaz.v@uni.pe>
+int exponencial(int x, int y) {
+    int resultado = 1;
+
+    for (int i = 0; i < y; i++) {
+        resultado *= x;
+    }
+
+    return resultado;
+}
 
 // 8 Gallo Lugo Carlos enrique <cgallolugo@gmail.com>
 
