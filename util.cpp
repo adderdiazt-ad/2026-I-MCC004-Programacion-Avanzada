@@ -27,6 +27,10 @@ int suma(int x, int y) {
 
 // 11 Oscar Toledo Guerrero <tgoscar@gmail.com>
 
+int resta(int x, int y) {
+    return x - y;
+}
+
 // 12 Quispe Calloapaza, David Saul <quispedavid987@gmail.com>
 
 // 13 Suarez Maciel Susana Isabel <susana.suarez.maciel@gmail.com>
