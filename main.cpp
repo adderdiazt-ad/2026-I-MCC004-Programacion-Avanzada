@@ -79,8 +79,8 @@ int main() {
     cout << "Luis Vilca: " << res << endl;
 
     // 16 Vinatea Chávez Camilo Jorge <camo2391@gmail.com>
-    float x16 = 3.14, y16 = 2.71;
-    float z16 = mult(x16, y16);
+    T16 x16 = 3.14, y16 = 2.71;
+    T16 z16 = mult(x16, y16);
     cout << "Camilo Vinatea: " << z16 << endl;
     // 20 Segura Nuñez Alex Ernesto <alex.segura.nunez@gmail.com>
 

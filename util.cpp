@@ -77,7 +77,7 @@ int fact(int n) {
 }
 
 // 16 Vinatea Chávez Camilo Jorge <camo2391@gmail.com>
-float mult(float x, float y) {
+T16 mult(T16 x, T16 y) {
     return x*y;
 }
 

@@ -42,7 +42,7 @@ float porcentaje(int a14, int b14);
 int fact(int n);
 
 // 16 Vinatea Chávez Camilo Jorge <camo2391@gmail.com>
-float mult(float x, float y);
+T16 mult(T16 x, T16 y);
 // 20 Segura Nuñez Alex Ernesto <alex.segura.nunez@gmail.com>
 
 // 21 Selis Vasquez Luis Antonio <luisanonioselisvasquez@gmail.com>
