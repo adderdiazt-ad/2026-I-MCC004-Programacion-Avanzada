@@ -1,5 +1,7 @@
 #include <iostream>
 #include "util.h"
+
+#include <math.h> //
 using namespace std;
 
 // Ernesto Cuadros
@@ -67,7 +69,9 @@ int main() {
     cout << "Suarez Maciel Susana Isabel: El cuadrado de: " << x13 << " es " << result << endl;
     
     // 14 Tellez Heredia Jhon <phyjhon@gmail.com>,
-
+    int a14 = 1, b14 = 2;
+    float c14 = porcentaje(a14, b14);
+    cout << "porcentaje: " << c14 << endl;
     // 15 Vilca Aguilar Luis Angel <luisangelvilca2@gmail.com>,
     // Factorial
     int n = 6;
