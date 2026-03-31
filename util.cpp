@@ -82,7 +82,7 @@ T12 Promedio(T12 x0, T12 y0) {
 }
 
 // 13 Suarez Maciel Susana Isabel <susana.suarez.maciel@gmail.com>
-    int cuadrado(int x13){
+    T1 cuadrado(T1 x13){
         return x13 * x13;
     }
 

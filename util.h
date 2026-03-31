@@ -38,8 +38,8 @@ U1 factorial(U1 number);
 double Promedio(double x0, double y0);
 
 // 13 Suarez Maciel Susana Isabel <susana.suarez.maciel@gmail.com>
-    int cuadrado(int x13);
-    
+    T1 cuadrado(T1 x13);
+
 // 14 Tellez Heredia Jhon <phyjhon@gmail.com>,
 F14 porcentaje(T14 a14, T14 b14);
 // 15 Vilca Aguilar Luis Angel <luisangelvilca2@gmail.com>,
