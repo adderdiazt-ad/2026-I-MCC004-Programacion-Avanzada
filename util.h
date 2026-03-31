@@ -8,6 +8,8 @@ T1 suma(T1 x, T1 y);
 // 1 Alvarez Cadillo, Michell Adrian <<michell.aac.1106@gmail.com>,
 int resta(int x, int y);
 
+T1 resta(T1 x, T1 y);
+
 // 2 Bernaola Gayoso César Raúl <bernaolacesar@gmail.com>,
 int multiplicacion(int x, int y);
 

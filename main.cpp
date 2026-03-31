@@ -15,7 +15,11 @@ int main() {
 
     // 1 Alvarez Cadillo, Michell Adrian <<michell.aac.1106@gmail.com>,
     // Resta
-    
+
+    T1 x1 = 5, y1 = 3;
+    T1 a111 = resta(x1, y1);
+    cout << "Michell Alvarez-Cadillo: " << a111 << endl;
+
     // 2 Bernaola Gayoso César Raúl <bernaolacesar@gmail.com>,
     // Multiplicar
     int x1 = 5, y1 = 3;
