@@ -22,11 +22,6 @@ int main() {
         
     // 2 Bernaola Gayoso César Raúl <bernaolacesar@gmail.com>,
     // Multiplicar
-    int x1 = 5, y1 = 3;
-    int a1 = resta(x1, y1);
-    cout << "Michell Alvarez-Cadillo: " << a1 << endl;
-
-    // 2 Bernaola Gayoso César Raúl <bernaolacesar@gmail.com>,
     cout << "Bernaola Gayoso Cesar Raul: " << multiplicacion(x0, y0) << endl;
 
     // 3 Castro Chaupis, Armando Cristhian <armandocristhiancastrochaupis@gmail.com>,
