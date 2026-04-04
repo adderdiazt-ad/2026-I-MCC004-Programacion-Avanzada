@@ -8,26 +8,20 @@ T1 suma(T1 x, T1 y) {
 }
 
 // 1 Alvarez Cadillo, Michell Adrian <<michell.aac.1106@gmail.com>,
-int resta(int x, int y) {
-    return x - y;
-}
-
-
-
-
 T1 resta(T1 x, T1 y) {
     return x - y;
 }
+
 // 2 Bernaola Gayoso César Raúl <bernaolacesar@gmail.com>,
 T1 multiplicacion(T1 x, T1 y) {
     return x * y;
 }
 
 // 3 Castro Chaupis, Armando Cristhian <armandocristhiancastrochaupis@gmail.com>,
-T3F dividir(T3F x,T3F y)
-{
+T3F dividir(T3F x,T3F y){
     return x/y;
 }
+
 // 4 Castro Galindo Carlo André <carlocastrogalindo@gmail.com>,
 T1 potencia(T1 base, T1 exponente) {
     T1 resultado = 1;
@@ -45,6 +39,7 @@ T5 raizCuadrada(T5 x) {
     }
     return sqrt(x);
 }
+
 // 6 Díaz Vega Greta Solange <gretadiaz01@gmail.com>
 
 // 7 DÍAZ VEGA OLENKA HELENE <olenka.diaz.v@uni.pe>
@@ -59,12 +54,22 @@ int exponencial(int x, int y) {
 }
 
 // 8 Gallo Lugo Carlos enrique <cgallolugo@gmail.com>
+T8 fibo(T8 n) {
+    if (n==1) return 1;
+    T8 a=0, b=1,c;
+    for (T8 i=2; i<=n;i++){
+        c = a+b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
 
 // 9 Lopez Flores Royer Amed <roamlofl9@gmail.com>
-// abs
 T_ABS valor_absoluto(T_ABS x) {
     return (x < 0) ? -x : x; 
 }
+
 // 10 Miranda Zarate Jorge Luis <mirandazaratejorge@gmail.com>,
 U1 factorial(U1 number){
     U1 result = 1;

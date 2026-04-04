@@ -25,6 +25,7 @@ T5 raizCuadrada(T5 x);
 // 7 DÍAZ VEGA OLENKA HELENE <olenka.diaz.v@uni.pe>
 
 // 8 Gallo Lugo Carlos enrique <cgallolugo@gmail.com>
+T8 fibo(T8 n);
 
 // 9 Lopez Flores Royer Amed <roamlofl9@gmail.com>
 T_ABS valor_absoluto(T_ABS x);
