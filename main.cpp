@@ -34,7 +34,7 @@ int main() {
     // Potencia
     T1 base = 2, exponente = 3;
     T1 a4 = potencia(base, exponente);
-    cout << "Castro Galindo Carlo André: " << a4 << endl;
+    cout << "Castro Galindo Carlo Andre: " << a4 << endl;
     
     // 5 Diaz Tapia Adderly Orlando <adderly.diaz.tapia@gmail.com>
     // Raiz cuadrada
@@ -47,17 +47,15 @@ int main() {
     // 7 DÍAZ VEGA OLENKA HELENE <olenka.diaz.v@uni.pe>
     
     // 8 Gallo Lugo Carlos enrique <cgallolugo@gmail.com>
+    T8 n8 = 7;
+    T8 f8 = fibo(n8);
+    cout << "Carlos Enrique Gallo Lugo: fibonacci(" << n8 << ") = " << f8 << endl;
 
     // 9 Lopez Flores Royer Amed <roamlofl9@gmail.com>
     // Valor absoluto
-    cout << endl;
     T_ABS x91 = -3.14;
     T_ABS a91 = valor_absoluto(x91);
     cout << "Lopez Flores Royer Amed: " << a91 << endl;
-    T_ABS x92 = 2.71;
-    T_ABS a92 = valor_absoluto(x92);
-    cout << "Lopez Flores Royer Amed: " << a92 << endl;
-    cout<<endl;
 
     // 10 Miranda Zarate Jorge Luis <mirandazaratejorge@gmail.com>,
     unsigned int u0 = 10;
@@ -92,9 +90,9 @@ int main() {
     // 20 Segura Nuñez Alex Ernesto <alex.segura.nunez@gmail.com>
 
     // 21 Selis Vasquez Luis Antonio <luisanonioselisvasquez@gmail.com>
-    T1 a1 = 5, b1 = 6; 
-    T1 r0 = (a1*a1 + b1*b1)/(a1 + b1); 
-    cout << r0 << endl;
+    T1 a21 = 5, b21 = 6; 
+    T1 r21 = (a21*a21 + b21*b21)/(a21 + b21); 
+    cout << "Selis Vasquez Luis Antonio: " << r21 << endl;
     
     return 0;
 }
