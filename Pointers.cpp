@@ -6,6 +6,7 @@
 #include "array2.h"
 #include "array3.h"
 #include "array4.h"
+#include "matrix1.h"
 
 using namespace std;
 
@@ -226,5 +227,18 @@ void DemoPointersVector5(){
     ofs << array5 ;
 }
 
+template <typename T>
+void pot_3(T &n, T x) { 
+    n = n*n*n-x; }
 void DemoPointersMatrix1(){
+    cout << "Demo matrices:\n";
+    Matrix1<T5> mat;
+    ifstream ifs("output3.txt");
+    ifs >> mat;
+    cout << mat;
+    mat.ApplyFunctionToAll(pot_3<T5>, 2);
+    ofstream ofs("output_matrix1.txt");
+    ofs << mat;
+    cout << "Matriz transformada:\n";
+    cout << mat;
 }

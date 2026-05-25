@@ -1,6 +1,5 @@
 #ifndef __ARRAY4_H__
 #define __ARRAY4_H__
-#include <__nullptr>
 #include <functional>
 #include <iostream>
 
