@@ -1,11 +1,14 @@
 #include <iostream> // cout, cin, endl
-#include <fstream>  // ofstream
+#include <fstream>
+#include <sstream>  // ofstream
 #include "Pointers.h"
 #include "util.h"
 #include "array1.h"
 #include "array2.h"
 #include "array3.h"
 #include "array4.h"
+#include "types.h"
+#include "matrix1.h"
 
 using namespace std;
 
@@ -184,6 +187,9 @@ void DemoPointersVector3(){
     ofstream ofs("output3.txt");
     array3.Print(ofs);
     ofs.close();
+    stringstream ss2("2 x 2\n1 2\n3 4");
+    stringstream ss3("2 x 2\n1 0\n0 1");
+    stringstream ss4("2 x 2\n2 2\n2 2");
 }
 
 void DemoPointersVector4(){
@@ -227,4 +233,20 @@ void DemoPointersVector5(){
 }
 
 void DemoPointersMatrix1(){
+    stringstream ss2("2 x 2\n1 2\n3 4");
+    stringstream ss3("2 x 2\n1 0\n0 1");
+    stringstream ss4("2 x 2\n2 2\n2 2");
+    Matrix1<TI> m1, m2, m3, m4;
+    ss2 >> m2;
+    ss3 >> m3;
+    ss4 >> m4;
+    cout << "Matriz m2:\n" << m2;
+    cout << "Matriz m3:\n" << m3;
+    cout << "Matriz m4:\n" << m4;               
+    // Tu demo exacta:
+    m1 = 4*m4;
+    cout << "Resultado de m1 = 4 * m4:\n" << m1;
+    m1 = 5 * m2 + m3 * m4;
+    cout << "Resultado de m1 = 5 * m2 + m3 * m4:\n" << m1;
+    cout << m1-m3 << endl;
 }
