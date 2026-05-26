@@ -42,6 +42,7 @@ void Matrix1<T>::Create()
 
 template <typename T>
 istream &Matrix1<T>::Read(istream &is) {
+    destroy();
     string line;
     getline(is, line,'\0');
     for(char &c : line)
@@ -95,6 +96,7 @@ void Matrix1<T>::Destroy() {
         delete[] m_pMat;
         m_pMat = nullptr;
     }
+    m_rows = m_cols = 0;
 }
 
 #endif // __MATRIX_H__
