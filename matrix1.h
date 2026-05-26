@@ -96,7 +96,8 @@ void Matrix1<T>::Destroy() {
         delete[] m_pMat;
         m_pMat = nullptr;
     }
-    m_rows = m_cols = 0;
+    m_rows = 0;
+    m_cols = 0;
 }
 
 #endif // __MATRIX_H__
