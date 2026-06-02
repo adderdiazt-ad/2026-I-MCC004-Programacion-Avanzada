@@ -248,5 +248,6 @@ void DemoPointersMatrix1(){
     cout << "Resultado de m1 = 4 * m4:\n" << m1;
     m1 = 5 * m2 + m3 * m4;
     cout << "Resultado de m1 = 5 * m2 + m3 * m4:\n" << m1;
-    cout << m1-m3 << endl;
+    cout << "Resultado de m1 - m3:\n" << m1-m3;
+    cout << "Resultado de m2 * m3:\n" << m2 * m3;
 }

@@ -115,6 +115,9 @@ void Matrix1<T>::Destroy() {
 
 template <typename T>
 Matrix1<T> Matrix1<T>::operator+(const Matrix1<T> &other) const{
+    if (m_rows != other.m_rows || m_cols != other.m_cols) {
+        throw invalid_argument("Error de dimensiones: Para la suma, ambas matrices deben tener el mismo número de filas y columnas.");
+    }
     Matrix1<T> m3;
     m3.m_rows = other.m_rows;
     m3.m_cols = other.m_cols;
@@ -127,6 +130,9 @@ Matrix1<T> Matrix1<T>::operator+(const Matrix1<T> &other) const{
 
 template <typename T>
 Matrix1<T> Matrix1<T>::operator-(const Matrix1<T> &other) const{
+    if (m_rows != other.m_rows || m_cols != other.m_cols) {
+        throw std::invalid_argument("Error de dimensiones: Para la resta, ambas matrices deben tener el mismo número de filas y columnas.");
+    }
     Matrix1<T> m3;
     m3.m_rows = other.m_rows;
     m3.m_cols = other.m_cols;
