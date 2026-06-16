@@ -233,21 +233,26 @@ void DemoPointersVector5(){
 }
 
 void DemoPointersMatrix1(){
+    
     stringstream ss2("2 x 2\n1 2\n3 4");
     stringstream ss3("2 x 2\n1 0\n0 1");
     stringstream ss4("2 x 2\n2 2\n2 2");
-    Matrix1<TI> m1, m2, m3, m4;
+    Matrix1<TI> m1, m2, m3, m4, m5;
     ss2 >> m2;
     ss3 >> m3;
     ss4 >> m4;
     cout << "Matriz m2:\n" << m2;
     cout << "Matriz m3:\n" << m3;
-    cout << "Matriz m4:\n" << m4;               
+    cout << "Matriz m4:\n" << m4;
+    cout<< "Elemento [1][1] de m4: " << m4[1][1] << endl; 
+
     // Tu demo exacta:
+    
     m1 = 4*m4;
     cout << "Resultado de m1 = 4 * m4:\n" << m1;
+    
     m1 = 5 * m2 + m3 * m4;
     cout << "Resultado de m1 = 5 * m2 + m3 * m4:\n" << m1;
-    cout << "Resultado de m1 - m3:\n" << m1-m3;
-    cout << "Resultado de m2 * m3:\n" << m2 * m3;
+    cout << "Resultado de m2 * m3:\n" << m2 * m1;
+
 }

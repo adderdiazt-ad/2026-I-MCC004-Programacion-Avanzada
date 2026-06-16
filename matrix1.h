@@ -6,6 +6,9 @@
 #include <sstream>
 #include <cassert>
 #include <utility>
+#include <regex>
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -23,22 +26,35 @@ class Matrix1 {
         T      **m_pMat = nullptr;
         size_t   m_rows = 0, m_cols = 0;
     public:
-        Matrix1 ()      { }
+        Matrix1(){};
+        Matrix1 (size_t rows, size_t cols);
         ~Matrix1()     { Destroy(); }
         Matrix1 (const Matrix1 &other) = delete;
         Matrix1 (Matrix1 &&other);
         void     Create();
+
+        T get(size_t r, size_t c) const;
+        void set(size_t r, size_t c, T value);
+
         istream &Read(istream &is);
         template <typename Func, typename... Args>
         void ApplyFunctionToAll(Func func, Args&& ...args);
-        ostream &Print(ostream &os);
+        ostream &Print(ostream &os) const;
         void Destroy();
+        T* operator[](size_t row) { return m_pMat[row]; }
         Matrix1<T> operator+(const Matrix1<T> &other) const;
         Matrix1<T> operator-(const Matrix1<T> &other) const;
         Matrix1<T> operator*(T value) ;
         Matrix1<T> operator*(const Matrix1<T> &other) const;
         Matrix1<T> &operator=( Matrix1<T> &&other);
+        Matrix1<T> &Transpose();
+        Matrix1<T> &Map(const std::function<T(T)>& func);
 };
+template <typename T>
+Matrix1<T>::Matrix1(size_t rows, size_t cols) : m_rows(rows), m_cols(cols) {
+    Create();
+    this->ApplyFunctionToAll([](T &n,size_t i,size_t j, Matrix1<T> &mat) {n = 0;}, *this);
+}
 template <typename T>
 Matrix1<T>::Matrix1(Matrix1 &&other) {
     m_pMat = exchange(other.m_pMat, nullptr);
@@ -47,30 +63,82 @@ Matrix1<T>::Matrix1(Matrix1 &&other) {
 }
 template <typename T>
 void Matrix1<T>::Create()
-{   assert(m_rows > 0 && m_cols > 0);
-    m_pMat = new T *[m_rows];
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        m_pMat[i] = new T[m_cols];
+{   if(m_rows > 0 && m_cols > 0) {
+        m_pMat = new T *[m_rows];
+        for(size_t i = 0 ; i < m_rows ; ++i)
+            m_pMat[i] = new T[m_cols];
+    }else{
+        throw invalid_argument("Error de dimensiones: El número de filas y columnas debe ser mayor que cero.");
+    }
 }
-
+template <typename T>
+Matrix1<T>& Matrix1<T>::Transpose() {
+    Matrix1<T> temp;
+    temp.m_rows = m_cols;
+    temp.m_cols = m_rows;
+    temp.Create(); 
+    temp.ApplyFunctionToAll([this](T &n, size_t i, size_t j) {
+         n = this->m_pMat[j][i];
+    });
+    *this = move(temp);
+    return *this;
+}
+template <typename T>
+Matrix1<T>& Matrix1<T>::Map(const function<T(T)>& func) {
+    this->ApplyFunctionToAll([&func](T &n, size_t i, size_t j) {n = func(n); });
+    return *this;
+}
+template <typename T>
+T Matrix1<T>::get(size_t r, size_t c) const {
+    return (r<m_rows && c<m_cols) ? m_pMat[r][c] : throw invalid_argument("Índice fuera de los límites"); 
+}
+template <typename T>
+void Matrix1<T>::set(size_t r, size_t c, T value) {
+    if(r<m_rows && c<m_cols) m_pMat[r][c] = value;
+    else throw invalid_argument("Índice fuera de los límites");
+}
 template <typename T>
 istream &Matrix1<T>::Read(istream &is) {
-    Destroy();
+    string text = "";
     string line;
-    getline(is, line,'\0');
-    for(char &c : line)
-        if(c == ',' || c == ';'|| c == '[' || c == ']'|| c == 'x')
-            c = ' ';
-    stringstream ss(line);
-    ss >> m_rows >> m_cols;
-    Create();
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        for(size_t j = 0 ; j < m_cols ; ++j)
-            ss >> m_pMat[i][j];
+    while (getline(is, line)) {
+        text += line + " ";
+        if (line.find(']') != string::npos) break;
+    }
+    regex dim_regex(R"(Matriz:\s*(\d+)\s*x\s*(\d+))");
+    smatch dim_match;
+    if (regex_search(text, dim_match, dim_regex)) {
+        size_t new_rows = stoull(dim_match[1].str());
+        size_t new_cols = stoull(dim_match[2].str());
+        Destroy();
+        m_rows = new_rows;
+        m_cols = new_cols;
+        Create();
+        size_t start = text.find('[');
+        size_t end = text.find(']');
+        if (start != string::npos && end != string::npos && start < end) {
+            string data_str = text.substr(start + 1, end - start - 1);
+            regex num_regex(R"((-?\d+(\.\d+)?(e[-+]?\d+)?))");
+            sregex_iterator num_it(data_str.begin(), data_str.end(), num_regex);
+            sregex_iterator num_end;
+            this->ApplyFunctionToAll([&num_it, &num_end](T &n, size_t i, size_t j) {
+                if (num_it != num_end) {
+                    stringstream ss(num_it->str());
+                    ss >> n;  
+                    ++num_it;
+                } else {
+                    throw invalid_argument("Faltan datos numéricos para llenar la matriz.");
+                }
+            });
+        }
+    } else {
+        throw invalid_argument("Formato incorrecto. Se esperaba 'Matriz: Row x Col'.");
+    }
+
     return is;
 }
 template <typename T>
-ostream &Matrix1<T>::Print(ostream &os) {
+ostream &Matrix1<T>::Print(ostream &os) const {
     os <<"Matriz: "<< m_rows << "x" << m_cols << "\n";
     os<<"[";
     for(size_t i = 0 ; i < m_rows-1 ; ++i) {
@@ -90,10 +158,10 @@ template <typename Func, typename... Args>
 void Matrix1<T>::ApplyFunctionToAll(Func func, Args&& ...args) {
     for(size_t i = 0 ; i < m_rows ; ++i)
         for(size_t j = 0 ; j < m_cols ; ++j)
-            func(m_pMat[i][j], forward<Args>(args)...);
+            func(m_pMat[i][j],i,j, forward<Args>(args)...);
 }
 template <typename T>
-ostream &operator<<(ostream &os, Matrix1<T> &mat){
+ostream &operator<<(ostream &os, const Matrix1<T> &mat){
     return mat.Print(os);
 }
 
@@ -118,39 +186,30 @@ Matrix1<T> Matrix1<T>::operator+(const Matrix1<T> &other) const{
     if (m_rows != other.m_rows || m_cols != other.m_cols) {
         throw invalid_argument("Error de dimensiones: Para la suma, ambas matrices deben tener el mismo número de filas y columnas.");
     }
-    Matrix1<T> m3;
-    m3.m_rows = other.m_rows;
-    m3.m_cols = other.m_cols;
-    m3.Create();
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        for(size_t j = 0 ; j < m_cols ; ++j)
-            m3.m_pMat[i][j] = m_pMat[i][j] + other.m_pMat[i][j];
+    Matrix1<T> m3(other.m_rows, other.m_cols);
+    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+        n = m1.m_pMat[i][j] + m2.m_pMat[i][j];
+    }, *this, other);
     return m3;
 }
 
 template <typename T>
 Matrix1<T> Matrix1<T>::operator-(const Matrix1<T> &other) const{
     if (m_rows != other.m_rows || m_cols != other.m_cols) {
-        throw std::invalid_argument("Error de dimensiones: Para la resta, ambas matrices deben tener el mismo número de filas y columnas.");
+        throw invalid_argument("Error de dimensiones: Para la resta, ambas matrices deben tener el mismo número de filas y columnas.");
     }
-    Matrix1<T> m3;
-    m3.m_rows = other.m_rows;
-    m3.m_cols = other.m_cols;
-    m3.Create();
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        for(size_t j = 0 ; j < m_cols ; ++j)
-            m3.m_pMat[i][j] = m_pMat[i][j] - other.m_pMat[i][j];
+    Matrix1<T> m3(other.m_rows, other.m_cols);
+    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+        n = m1.m_pMat[i][j] - m2.m_pMat[i][j];
+    }, *this, other);
     return m3;
 }
 template <typename T>
 Matrix1<T> Matrix1<T>::operator*(T value) {
-    Matrix1<T> m2;
-    m2.m_rows = m_rows;
-    m2.m_cols = m_cols;
-    m2.Create();
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        for(size_t j = 0 ; j < m_cols ; ++j)
-            m2.m_pMat[i][j] = value * m_pMat[i][j];
+    Matrix1<T> m2(m_rows, m_cols);
+    m2.ApplyFunctionToAll([](T &n, size_t i, size_t j,  Matrix1<T> &m1, T value) {
+        n = value * m1[i][j];
+    }, *this, value);
     return m2;
 }
 template <typename T>
@@ -159,17 +218,15 @@ Matrix1<T> operator*(T value, Matrix1<T> &matrix) {
 }
 template <typename T>
 Matrix1<T> Matrix1<T>::operator*(const Matrix1<T> &other) const{
-    assert(m_rows == other.m_cols);
-    Matrix1<T> m3;
-    m3.m_rows = m_rows;
-    m3.m_cols = other.m_cols;
-    m3.Create();
-    for(size_t i = 0 ; i < m_rows ; ++i)
-        for(size_t j = 0 ; j < other.m_cols ; ++j) {
-            m3.m_pMat[i][j] = 0;
-            for(size_t k = 0 ; k < m_cols ; ++k)
-                m3.m_pMat[i][j] += m_pMat[i][k] * other.m_pMat[k][j];
-        }
+    if(m_rows != other.m_cols) {
+        throw invalid_argument("Error de dimensiones: El número de columnas de la primera matriz debe ser igual al número de filas de la segunda matriz.");
+    }
+    Matrix1<T> m3(m_rows, other.m_cols);
+    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+        n = 0;
+        for(size_t k = 0 ; k < m1.m_cols ; ++k)
+            n += m1.m_pMat[i][k] * m2.m_pMat[k][j];
+    }, *this, other);
     return m3;
 }
 
@@ -184,7 +241,7 @@ Matrix1<T> &Matrix1<T>::operator=( Matrix1<T> &&result){
     return *this;
 }
 template <typename T>
-ostream &operator<<(ostream &os,  Matrix1<T> &&result){
+ostream &operator<<(ostream &os,  const Matrix1<T> &&result){
     return result.Print(os);
 }
 #endif // __MATRIX_H__
