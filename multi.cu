@@ -40,18 +40,17 @@ __global__ void matrizMulKernelTiled(const T3F* A, const T3F* B, T3F* C, TI N) {
     for (TI m = 0; m < (N + BLOCK_SIZE - 1) / BLOCK_SIZE; ++m) {
         
         // Cargar elemento de A en Shared Memory con protección de bordes
-        if (fila < N && (m * BLOCK_SIZE + tx) < N) {
+        if (fila < N && (m * BLOCK_SIZE + tx) < N) 
             ds_A[ty][tx] = A[fila * N + m * BLOCK_SIZE + tx];
-        } else {
+        else 
             ds_A[ty][tx] = 0.0f;
-        }
 
         // Cargar elemento de B en Shared Memory con protección de bordes
-        if (col < N && (m * BLOCK_SIZE + ty) < N) {
+        if (col < N && (m * BLOCK_SIZE + ty) < N) 
             ds_B[ty][tx] = B[(m * BLOCK_SIZE + ty) * N + col];
-        } else {
+        else 
             ds_B[ty][tx] = 0.0f;
-        }
+    
 
         // Esperar a que todo el bloque termine la fase de carga
         __syncthreads();

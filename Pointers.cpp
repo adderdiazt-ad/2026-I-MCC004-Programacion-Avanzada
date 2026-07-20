@@ -236,7 +236,7 @@ void DemoPointersMatrix1(){
     
     stringstream ss2("Matriz: 3x3 [ 1.0 4.0 3 ; 9.0 16.0 21; 3.0 2.0 1.0 ]");
     stringstream ss3("Matriz:3x3 [ 1.0 9.0 30.0 ; 1.0 1.0 0.0; 0.0 10.0 1.0 ]");
-    stringstream ss4("Matriz:3x3 [ 1.0 1.0 1.0 ; 1.0 1.0 1.0; 1.0 1.0 1.0 ]");
+    stringstream ss4("Matriz:3x3 [ 1.0 100 1.0 ; 1.0 10 1.0; 10.0 1.0 1.0 ]");
     Matrix1<TI> m1, m2, m3, m4, m5;
     ss2 >> m2;
     ss3 >> m3;
@@ -244,7 +244,6 @@ void DemoPointersMatrix1(){
     cout << "Matriz m2:\n" << m2;
     cout << "Matriz m3:\n" << m3;
     cout << "Matriz m4:\n" << m4;
-    cout<< "Elemento [1][1] de m4: " << m4.get(1, 1) << endl; 
 
     // Tu demo exacta:
     

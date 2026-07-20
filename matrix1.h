@@ -11,6 +11,7 @@
 #include <string>
 #include <shared_mutex>
 #include <mutex>
+#include <thread>
 
 using namespace std;
 
@@ -108,6 +109,13 @@ class Matrix1 {
          * @return ostream& Referencia al flujo de salida.
          */
         ostream &Print(ostream &os) const;
+
+        /**
+         * @brief Sobrecarga del operador de subíndice para acceder directamente a una fila.
+         * * @param row Índice de la fila.
+         * @return T* Puntero al inicio de la fila solicitada.
+         */
+        T* operator[](size_t row)  { return m_pMat[row]; }
         
         /**
          * @brief Suma dos matrices.
@@ -183,13 +191,23 @@ class Matrix1 {
          * @brief Libera la memoria asignada a la matriz y reinicia sus dimensiones a 0.
          */
         void Destroy();
-    
+
         /**
-         * @brief Sobrecarga del operador de subíndice para acceder directamente a una fila.
-         * * @param row Índice de la fila.
-         * @return T* Puntero al inicio de la fila solicitada.
+         * @brief Motor genérico de ejecución paralela dividiendo la carga por filas.
+         * @tparam Func Tipo de la función Lambda a ejecutar.
+         * @param total_rows Total de filas de la matriz a procesar.
+         * @param task Tarea que recibirá los límites: (size_t start_row, size_t end_row).
          */
-        T* operator[](size_t row)  { return m_pMat[row]; }
+        template <typename Func>
+        void ParallelExecute(size_t total_rows, Func&& task) const;
+
+        /**
+         * @brief Aplica una función secuencial a un subconjunto de filas (Para uso con hilos).
+         * @param start_row Fila de inicio (inclusiva).
+         * @param end_row Fila de fin (exclusiva).
+         */
+        template <typename Func, typename... Args>
+        void ApplyFunctionToRange(size_t start_row, size_t end_row, Func func, Args&& ...args);
 
         /**
          * @brief Aplica una función a todos los elementos de la matriz de forma secuencial.
@@ -214,6 +232,38 @@ Matrix1<T>::Matrix1(Matrix1 &&other) {
     m_rows = exchange(other.m_rows, 0);
     m_cols = exchange(other.m_cols, 0);
 }
+template <typename T>
+template <typename Func>
+void Matrix1<T>::ParallelExecute(size_t total_rows, Func&& task) const {
+    size_t hardware_threads = thread::hardware_concurrency();
+    size_t num_threads = (hardware_threads == 0) ? 4 : hardware_threads;
+    size_t rows_per_thread = total_rows / num_threads;
+    size_t remaining_rows = total_rows % num_threads;
+    vector<thread> threads;
+    size_t start_row = 0;
+    for (size_t i = 0; i < num_threads; ++i) {
+        size_t end_row = start_row + rows_per_thread + (i < remaining_rows ? 1 : 0);
+        if (start_row < end_row) {
+            threads.emplace_back([this, start_row, end_row, &task]() {
+                task(start_row, end_row);
+            });
+        }
+        start_row = end_row;
+    }
+
+    for (auto &t : threads) {
+        if (t.joinable()) 
+            t.join();
+    }
+}
+template <typename T>
+template <typename Func, typename... Args>
+void Matrix1<T>::ApplyFunctionToRange(size_t start_row, size_t end_row, Func func, Args&& ...args) {
+    for(size_t i = start_row ; i < end_row ; ++i)
+        for(size_t j = 0 ; j < m_cols ; ++j)
+            func(m_pMat[i][j],i,j, forward<Args>(args)...);
+} 
+
 template <typename T>
 void Matrix1<T>::Create()
 {   if(m_rows > 0 && m_cols > 0) {
@@ -355,10 +405,12 @@ Matrix1<T> Matrix1<T>::operator+(const Matrix1<T> &other) const{
     if (this == &other) lockThis.lock(); else lock(lockThis, lockOther);
     if (m_rows != other.m_rows || m_cols != other.m_cols) 
         throw invalid_argument("Error de dimensiones: Para la suma, ambas matrices deben tener el mismo número de filas y columnas.");
-    Matrix1<T> m3(other.m_rows, other.m_cols);
-    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
-        n = m1.m_pMat[i][j] + m2.m_pMat[i][j];
-    }, *this, other);
+    Matrix1<T> m3(m_rows, m_cols);
+    ParallelExecute(m_rows, [&](size_t start, size_t end) {
+        m3.ApplyFunctionToRange(start, end, [](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+            n = m1.m_pMat[i][j] + m2.m_pMat[i][j];
+        }, *this, other);
+    });
     return m3;
 }
 
@@ -370,19 +422,23 @@ Matrix1<T> Matrix1<T>::operator-(const Matrix1<T> &other) const{
     if (m_rows != other.m_rows || m_cols != other.m_cols) {
         throw invalid_argument("Error de dimensiones: Para la resta, ambas matrices deben tener el mismo número de filas y columnas.");
     }
-    Matrix1<T> m3(other.m_rows, other.m_cols);
-    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
-        n = m1.m_pMat[i][j] - m2.m_pMat[i][j];
-    }, *this, other);
+    Matrix1<T> m3(m_rows, m_cols);
+    ParallelExecute(m_rows, [&](size_t start, size_t end) {
+        m3.ApplyFunctionToRange(start, end, [](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+            n = m1.m_pMat[i][j] - m2.m_pMat[i][j];
+        }, *this, other);
+    });
     return m3;
 }
 template <typename T>
 Matrix1<T> Matrix1<T>::operator*(T value) {
     shared_lock<shared_mutex> lock(m_mutex);
     Matrix1<T> m2(m_rows, m_cols);
-    m2.ApplyFunctionToAll([](T &n, size_t i, size_t j,  Matrix1<T> &m1, T value) {
-        n = value * m1[i][j];
-    }, *this, value);
+    ParallelExecute(m_rows, [&](size_t start, size_t end) {
+        m2.ApplyFunctionToRange(start, end, [](T &n, size_t i, size_t j, const Matrix1<T> &m1, T val) {
+            n = m1.m_pMat[i][j] * val;
+        }, *this, value);
+    });
     return m2;
 }
 template <typename T>
@@ -398,11 +454,15 @@ Matrix1<T> Matrix1<T>::operator*(const Matrix1<T> &other) const{
         throw invalid_argument("Error de dimensiones: El número de columnas de la primera matriz debe ser igual al número de filas de la segunda matriz.");
     }
     Matrix1<T> m3(m_rows, other.m_cols);
-    m3.ApplyFunctionToAll([](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
-        n = 0;
-        for(size_t k = 0 ; k < m1.m_cols ; ++k)
-            n += m1.m_pMat[i][k] * m2.m_pMat[k][j];
-    }, *this, other);
+    ParallelExecute(m_rows, [&](size_t start, size_t end) {
+        m3.ApplyFunctionToRange(start, end, [](T &n, size_t i, size_t j, const Matrix1<T> &m1, const Matrix1<T> &m2) {
+            T sum = 0;
+            for (size_t k = 0; k < m1.m_cols; ++k) {
+                sum += m1.m_pMat[i][k] * m2.m_pMat[k][j];
+            }
+            n = sum;
+        }, *this, other);
+    });
     return m3;
 }
 
